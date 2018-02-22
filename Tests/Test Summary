@@ -1,0 +1,10 @@
+Tests performed: 108
+
+Errors Recieved: 2
+Error form: "GCD is not 1"
+Public key value when error occured: 43648605, 2187491274891
+
+How Error was fixed: Tried again with a new public key value
+
+(Conclusion: Both were highly composite values with many factors, causing an error.For 100% chance of success use prime
+numbers)
