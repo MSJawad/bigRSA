@@ -6,7 +6,7 @@ This project implements the encryption algorithm invented by Ron Rivest, Adi Sha
 and is still widely used to this day for data transmission. The difficulty in breaking RSA is similar to 
 the np problem of integer factorization, and is therefore, incredibly dificult.
 
-Generation of the 600 bit prime numbers is done by first ensuring they are not divisible by some of the common prime numbers know, and then by the application of the Miller-Rabin Primality Test. The error involved with the test diminishes the larger the number gets, therefore for such large numbers they become extremely accurate. For good measure, we apply the test twice
+Generation of the 600 bit prime numbers is done by first ensuring they are not divisible by some of the common prime numbers known, and then by the application of the Miller-Rabin Primality Test. The error involved with the test diminishes the larger the number gets, therefore for such large numbers they become extremely accurate. For good measure, we apply the test twice
 
 
 ## Overview
