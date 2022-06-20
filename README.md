@@ -16,10 +16,6 @@ milrab.py is the file that generates a prime using a given number of bits.
 rsa.py is the file that generates the primes using milrab, asks for your preferred public value, and then proceeds to 
 calculate the public and private keys for the program. With a successful input of e, it will produce two 
 lists, one with the entire public key and the other with the private key.
-(Please Note: with an unsuccessful public value it will produce the message: "GCD is not 1". Please do not panic.
-This merely means the public value you have chosen is incompatible with the prime numbers produced.  
-Please run the program again. If the problem persists you may want to consider changing the value of e as it may be 
-a very divisible number with many unique prime factors)
 
 encrypt.py will take in your public key credentials and your message and will give you an encrypted message.
 
