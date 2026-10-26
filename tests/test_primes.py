@@ -48,6 +48,7 @@ def test_carmichael_numbers_fool_fermat_but_not_miller_rabin(n):
     # A Carmichael number passes the Fermat test a**(n-1) = 1 (mod n) for
     # every base coprime to it, which is why the Fermat test alone is not enough.
     assert all(pow(a, n - 1, n) == 1 for a in range(2, 100) if math.gcd(a, n) == 1)
+    assert not all(is_strong_probable_prime(n, a) for a in SMALL_PRIMES[:13])
     assert not is_probable_prime(n)
 
 
