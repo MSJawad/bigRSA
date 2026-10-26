@@ -94,8 +94,12 @@ def test_key_files_round_trip(tmp_path, key):
 
 @pytest.mark.skipif(os.name != "posix", reason="POSIX file modes")
 def test_private_key_file_is_owner_only(tmp_path, key):
-    save_private_key(key, tmp_path / "k.private.json")
-    assert (tmp_path / "k.private.json").stat().st_mode & 0o777 == 0o600
+    path = tmp_path / "k.private.json"
+    save_private_key(key, path)
+    assert path.stat().st_mode & 0o777 == 0o600
+    path.chmod(0o644)
+    save_private_key(key, path)
+    assert path.stat().st_mode & 0o777 == 0o600
 
 
 def test_decryption_needs_private_key_file(tmp_path, key):
@@ -110,10 +114,12 @@ def test_decryption_needs_private_key_file(tmp_path, key):
         ("not json", "cannot read"),
         ("[1, 2]", "not a bigrsa key file"),
         ('{"type": "something-else"}', "not a bigrsa key file"),
-        ('{"type": "bigrsa-public-key", "n": 3233}', "'e'"),
-        ('{"type": "bigrsa-public-key", "n": "3233", "e": 17}', "'n'"),
-        ('{"type": "bigrsa-public-key", "n": true, "e": 17}', "'n'"),
-        ('{"type": "bigrsa-public-key", "n": 3233, "e": -17}', "'e'"),
+        ('{"type": "bigrsa-public-key", "bits": 12, "n": 3233}', "'e'"),
+        ('{"type": "bigrsa-public-key", "bits": 12, "n": "3233", "e": 17}', "'n'"),
+        ('{"type": "bigrsa-public-key", "bits": 12, "n": true, "e": 17}', "'n'"),
+        ('{"type": "bigrsa-public-key", "bits": 12, "n": 3233, "e": -17}', "'e'"),
+        ('{"type": "bigrsa-public-key", "n": 3233, "e": 17}', "'bits' must be"),
+        ('{"type": "bigrsa-public-key", "bits": 11, "n": 3233, "e": 17}', "'bits' does not match"),
     ],
 )
 def test_rejects_malformed_key_files(tmp_path, content, message):
@@ -128,11 +134,15 @@ def test_rejects_missing_key_file(tmp_path):
         load_public_key(tmp_path / "missing.json")
 
 
-def test_rejects_inconsistent_private_key(tmp_path, key):
+@pytest.mark.parametrize(
+    ("field", "message"),
+    [("n", "p \\* q"), ("bits", "'bits' does not match")],
+)
+def test_rejects_inconsistent_private_key(tmp_path, key, field, message):
     path = tmp_path / "k.private.json"
     save_private_key(key, path)
     data = json.loads(path.read_text())
-    data["n"] += 2
+    data[field] += 2
     path.write_text(json.dumps(data))
-    with pytest.raises(InvalidKeyError, match="p \\* q"):
+    with pytest.raises(InvalidKeyError, match=message):
         load_private_key(path)

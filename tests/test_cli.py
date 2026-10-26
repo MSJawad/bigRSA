@@ -1,4 +1,5 @@
 import io
+import os
 import subprocess
 import sys
 
@@ -60,6 +61,15 @@ def test_keygen_refuses_to_overwrite(keypair, capsys):
     assert code == 1
     assert "already exists" in err
     assert run(capsys, "keygen", "--out", prefix, "--bits", "64", "--force")[0] == 0
+
+
+@pytest.mark.skipif(os.name != "posix", reason="POSIX file modes")
+def test_keygen_force_makes_private_key_file_owner_only(keypair, capsys):
+    public, private = keypair
+    private.chmod(0o644)
+    prefix = str(public).removesuffix(".public.json")
+    assert run(capsys, "keygen", "--out", prefix, "--bits", "64", "--force")[0] == 0
+    assert private.stat().st_mode & 0o777 == 0o600
 
 
 def test_too_long_message_fails_cleanly(keypair, capsys):

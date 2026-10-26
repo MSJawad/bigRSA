@@ -91,10 +91,18 @@ def save_private_key(key: PrivateKey, path: Path) -> None:
         "p": key.p,
         "q": key.q,
     }
-    # Create the file readable by its owner only, before writing the secret.
+    # Make the file readable by its owner only before writing the secret.
     fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
     with os.fdopen(fd, "w") as f:
+        os.chmod(path, 0o600)
         f.write(json.dumps(data, indent=2) + "\n")
+
+
+def _get_int(data: dict, field: str, path: Path) -> int:
+    value = data.get(field)
+    if not isinstance(value, int) or isinstance(value, bool) or value < 1:
+        raise InvalidKeyError(f"{path}: field {field!r} must be a positive integer")
+    return value
 
 
 def _read_key_file(path: Path) -> dict:
@@ -104,14 +112,9 @@ def _read_key_file(path: Path) -> dict:
         raise InvalidKeyError(f"cannot read key file {path}: {err}") from err
     if not isinstance(data, dict) or data.get("type") not in (PUBLIC_TYPE, PRIVATE_TYPE):
         raise InvalidKeyError(f"{path} is not a bigrsa key file")
+    if _get_int(data, "bits", path) != _get_int(data, "n", path).bit_length():
+        raise InvalidKeyError(f"{path}: field 'bits' does not match the size of n")
     return data
-
-
-def _get_int(data: dict, field: str, path: Path) -> int:
-    value = data.get(field)
-    if not isinstance(value, int) or isinstance(value, bool) or value < 1:
-        raise InvalidKeyError(f"{path}: field {field!r} must be a positive integer")
-    return value
 
 
 def load_public_key(path: Path) -> PublicKey:

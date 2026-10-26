@@ -52,7 +52,7 @@ ciphertext is `-`. Run `python3 -m bigrsa <command> --help` for every option.
 | Module | What it does |
 | --- | --- |
 | [`bigrsa/primes.py`](bigrsa/primes.py) | `generate_prime(bits)` draws random odd numbers with the top two bits set and keeps the first that passes `is_probable_prime`. That function first divides by the 168 primes below 1000, which rules out most candidates cheaply, then runs Miller-Rabin. Below about 3.3 * 10^24 it uses the first 13 primes as bases, which makes the answer exact. Above that it uses 40 random bases, so a composite gets through with probability at most 2^-80. |
-| [`bigrsa/keys.py`](bigrsa/keys.py) | `generate_key(bits, e)` picks primes p and q until gcd(e, (p-1)(q-1)) = 1, then sets n = pq and d = e^-1 mod (p-1)(q-1). Keys are saved as JSON. The private key file is created readable by its owner only. |
+| [`bigrsa/keys.py`](bigrsa/keys.py) | `generate_key(bits, e)` picks primes p and q until gcd(e, (p-1)(q-1)) = 1, then sets n = pq and d = e^-1 mod (p-1)(q-1). Keys are saved as JSON. The private key file is made readable by its owner only. |
 | [`bigrsa/codec.py`](bigrsa/codec.py) | A message is encoded as UTF-8, with a marker byte in front so that leading zero bytes survive, and read as one big-endian integer m < n. Encryption is c = m^e mod n, and decryption is m = c^d mod n. Decryption with the wrong key is detected and reported. |
 | [`bigrsa/cli.py`](bigrsa/cli.py) | The `keygen`, `encrypt` and `decrypt` commands. |
 
@@ -74,8 +74,9 @@ knows an efficient classical algorithm for that.
 
 ```console
 $ python3 -m venv .venv && source .venv/bin/activate
-$ python -m pip install -e ".[test]"
+$ python -m pip install -e ".[dev]"
 $ python -m pytest
+$ ruff check . && ruff format --check .
 ```
 
 The tests cover the following:
@@ -85,7 +86,7 @@ The tests cover the following:
 - The key invariants, such as e * d = 1 mod (p-1)(q-1) and the exact modulus size.
 - The CLI.
 
-CI runs them on Python 3.10 to 3.13.
+CI runs the tests on Python 3.10 to 3.13, plus `ruff check` and `ruff format --check`.
 
 ## Author
 
