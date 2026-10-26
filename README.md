@@ -1,6 +1,6 @@
 # bigRSA
 
-[![CI](https://github.com/MSJawad/bigRSA/actions/workflows/ci.yml/badge.svg)](https://github.com/MSJawad/bigRSA/actions/workflows/ci.yml)
+[![CI](https://github.com/MSJawad/bigRSA/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/MSJawad/bigRSA/actions/workflows/ci.yml)
 
 RSA from scratch in pure Python, with no dependencies. bigrsa generates its own large primes using
 small-prime trial division and the Miller-Rabin test, builds RSA keys from them (a 1200-bit
