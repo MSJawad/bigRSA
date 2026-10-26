@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bigrsa"
+version = "1.0.0"
+description = "Textbook RSA in pure Python, for learning: prime generation, key generation, and a small CLI"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Mohammad Solaiman Jawad" }]
+requires-python = ">=3.10"
+dependencies = []
+keywords = ["rsa", "cryptography", "miller-rabin", "education"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Education",
+    "Topic :: Security :: Cryptography",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+bigrsa = "bigrsa.cli:main"
+
+[project.urls]
+Repository = "https://github.com/MSJawad/bigRSA"
+
+[tool.setuptools]
+packages = ["bigrsa"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
